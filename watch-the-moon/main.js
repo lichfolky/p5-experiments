@@ -8,7 +8,8 @@ let moonColor = new color("#C7AE93");
 let skyColor = new color("#252A4F");
 let backgroundColor = new color("#D9D9D9");
 */
-let moonColor;
+let moonStrokeColor;
+let moonFillColor;
 let skyColor;
 let starsColor;
 let backgroundColor;
@@ -24,17 +25,17 @@ let rotation = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  moonColor = color("#C7AE93");
+  moonStrokeColor = color("#bfa282");
   starsColor = color("#C7AE93");
   skyColor = color("#252A4F");
   backgroundColor = color("#D9D9D9");
+  moonFillColor = color("#C7AE93");;
 
   background(backgroundColor);
   centerx = windowWidth / 2;
   centery = windowHeight / 2;
   createStars();
-  fakeSkyColor = lerpColor(moonColor, skyColor, 0.9);
-
+  fakeSkyColor = lerpColor(moonStrokeColor, skyColor, 0.9);
 }
 
 function windowResized() {
@@ -43,6 +44,7 @@ function windowResized() {
 }
 
 function draw() {
+  colorMode(RGB);
   noStroke();
   drawSkyBack();
   drawMoon();
@@ -54,6 +56,8 @@ function draw() {
 
 function drawSkyBack() {
   push();
+  strokeWeight(3);
+  stroke(skyColor);
   fill(skyColor);
   circle(centerx, centery, skyDiameter);
   pop();
@@ -61,13 +65,25 @@ function drawSkyBack() {
 
 function drawMoon() {
   push();
-  fill(moonColor);
+  //strokeWeight(5);
+  //fill(moonFillColor);
+  //stroke(moonStrokeColor);
   translate(centerx, centery);
   rotate(rotation * (PI / 800));
   rotation++;
-  circle(moonMargin - skyDiameter / 2 + moonDiameter / 2, 0, moonDiameter);
-  circle(-moonMargin + skyDiameter / 2 - moonDiameter / 2, 0, moonDiameter);
+  //circle(moonMargin - skyDiameter / 2 + moonDiameter / 2, 0, moonDiameter);
+  //circle(-moonMargin + skyDiameter / 2 - moonDiameter / 2, 0, moonDiameter);
+  drawGradientCircle(moonMargin - skyDiameter / 2 + moonDiameter / 2, 0, moonDiameter, skyColor, moonFillColor);
+  drawGradientCircle(-moonMargin + skyDiameter / 2 - moonDiameter / 2, 0, moonDiameter, skyColor, moonFillColor);
   pop();
+}
+
+function drawGradientCircle(x, y, diameter, startColor, endColor) {
+  for (let r = 1; r > 0.7; r -= 0.03) {
+    let colorFill = lerpColor(startColor, endColor, r);
+    fill(colorFill);
+    circle(x, - moonDiameter / 2 + y + r * moonDiameter / 2, floor(diameter * r));
+  }
 }
 
 function createStars() {
